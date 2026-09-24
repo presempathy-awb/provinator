@@ -1,0 +1,33 @@
+# Checksums vendored with provinator.
+#
+# opam 2.6.0 and elan 4.2.4: GitHub release asset digests for the official
+# release files (ocaml/opam tag 2.6.0, leanprover/elan tag v4.2.4).
+# why3-1.8.2.tar.gz: sha256 published in ocaml/opam-repository
+#   packages/why3/why3.1.8.2/opam for
+#   https://why3.gitlabpages.inria.fr/releases/why3-1.8.2.tar.gz
+# rocq-9.2.0.tar.gz: sha256 published in ocaml/opam-repository
+#   packages/coq-core/coq-core.9.2.0/opam (and rocq-runtime.9.2.0) for
+#   https://github.com/rocq-prover/rocq/releases/download/V9.2.0/rocq-9.2.0.tar.gz
+# openssl-3.5.8.tar.gz: sha256 published at
+#   https://www.openssl.org/source/openssl-3.5.8.tar.gz.sha256
+# strace-7.2.tar.xz: GitHub release asset digest for
+#   https://github.com/strace/strace/releases/download/v7.2/strace-7.2.tar.xz
+#   (the strace 7.2 release page also publishes a PGP signature, strace-7.2.tar.xz.asc)
+# LADR-2009-11A.tar.gz: the official Prover9 download page does not publish a
+#   digest. This sha256 was computed on 2026-09-24 from the 1795750-byte
+#   tarball at https://www.cs.unm.edu/~mccune/prover9/download/LADR-2009-11A.tar.gz
+#   The MD5 of those bytes is ab409f31ecbb4410b1c7d75deadea2c6.
+
+a59184447f881005dae70b2ae455c3a7e9549834a41c635c49a5a28235eca758  opam-2.6.0-x86_64-linux
+b57ed6cc082e560063989a285c59786b7c670087da2d317a87e4ba4c7973e71f  opam-2.6.0-arm64-macos
+aeaeb4294a9abaa7d37844d9138230125933c648e631da2eec888b5e4ce55bde  opam-2.6.0-arm64-linux
+ebf457f96860d7e89e3aa68a8cbee6c8a8569a8f9677918fcf15c29e1873b072  opam-2.6.0-x86_64-macos
+42b94d4244e8353142c456ec0e4ca6528fd898a6c604d4059f494e706e431f63  elan-x86_64-unknown-linux-gnu.tar.gz
+05febd124d84ebf994b2e7479922a5650b1e950c17ae3bd1ddd776b65bb72bf9  elan-aarch64-unknown-linux-gnu.tar.gz
+8a340b309d8ed2e96f930761fa223b3af57a38f5d253b53ac90293c9516f8cd4  elan-x86_64-apple-darwin.tar.gz
+7ad829861392c718dfebde3a83b5c8508df47be02af68894b094b0b3952616e5  elan-aarch64-apple-darwin.tar.gz
+b7d112edd5bcce6bcce0023d2bc834eb2ae1a1c42d7aea44ffa124d649b50bea  why3-1.8.2.tar.gz
+a45280ab4fbaac7540b136a6b073b4a6db15739ec1e149bded43fa6f4fc25f20  rocq-9.2.0.tar.gz
+a8f84a39918ec6415ce765d9b429d313ba97b8143169c172e734b9514464f5b2  openssl-3.5.8.tar.gz
+4bde6246926890dcee824f6e6ac42a06752f47d77e5097d86e3c0d6d4b709fe5  strace-7.2.tar.xz
+c32bed5807000c0b7161c276e50d9ca0af0cb248df2c1affb2f6fc02471b51d0  LADR-2009-11A.tar.gz
