@@ -1,0 +1,177 @@
+#!/bin/sh
+# provinator — install and uninstall pinned proof and cryptography tools.
+# POSIX sh. No third-party runtime beyond the upstream installers it calls.
+
+set -eu
+
+ROOT=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+# shellcheck source=lib/common.sh
+. "$ROOT/lib/common.sh"
+# shellcheck source=lib/disk.sh
+. "$ROOT/lib/disk.sh"
+# shellcheck source=lib/install.sh
+. "$ROOT/lib/install.sh"
+# shellcheck source=pins/versions.env
+. "$ROOT/pins/versions.env"
+
+usage_main() {
+  cat <<'EOF'
+Usage: provinator <command> [options] [tool...]
+
+Commands:
+  install      Install pinned tools under the prefix
+  uninstall    Remove only what provinator installed under the prefix
+
+Run provinator <command> --help for command options and examples.
+EOF
+}
+
+usage_install() {
+  cat <<'EOF'
+Usage: provinator install [options] [tool...]
+
+Install pinned tools under a user prefix. With no tools, install every tool.
+strace is installed only on Linux. The command does not edit shell startup
+files and does not install system compilers.
+
+Options:
+  --prefix DIR      Install location (default: $HOME/.local/provinator)
+  --layout-only     Record the install layout without downloading
+  -h, --help        Show this help
+
+Tools:
+  opam coq why3 easycrypt elan prover9 mldsa strace
+
+Examples:
+  sh provinator install
+  sh provinator install opam coq why3
+  sh provinator --prefix "$HOME/.local/provinator" install easycrypt
+  sh provinator install --layout-only
+EOF
+}
+
+usage_uninstall() {
+  cat <<'EOF'
+Usage: provinator uninstall [options] [tool...]
+
+Remove files recorded for the selected tools. With no tools, remove every
+tool provinator installed. Paths outside the prefix, system compilers, and
+packages installed by the system package manager are left in place.
+
+Options:
+  --prefix DIR      Prefix to clean (default: $HOME/.local/provinator)
+  --dry-run         Print paths that would be removed
+  -h, --help        Show this help
+
+Examples:
+  sh provinator uninstall
+  sh provinator uninstall easycrypt
+  sh provinator --prefix "$HOME/.local/provinator" uninstall --dry-run
+EOF
+}
+
+show_help() {
+  case "$1" in
+    install) usage_install ;;
+    uninstall) usage_uninstall ;;
+    *) usage_main ;;
+  esac
+}
+
+main() {
+  cmd=
+  help_target=main
+  PREFIX=${PROVINATOR_PREFIX:-${HOME:-}/.local/provinator}
+  layout_only=0
+  dry_run=0
+  tools=
+  prefix_set=0
+
+  while [ $# -gt 0 ]; do
+    case "$1" in
+      install|uninstall)
+        if [ -n "$cmd" ]; then
+          die "only one command is accepted
+  sh provinator install --help"
+        fi
+        cmd=$1
+        help_target=$1
+        shift
+        ;;
+      --prefix)
+        if [ $# -lt 2 ]; then
+          die "missing value for --prefix
+  sh provinator install --prefix \"\$HOME/.local/provinator\""
+        fi
+        PREFIX=$2
+        prefix_set=1
+        shift 2
+        ;;
+      --prefix=*)
+        PREFIX=${1#--prefix=}
+        prefix_set=1
+        shift
+        ;;
+      --layout-only)
+        layout_only=1
+        shift
+        ;;
+      --dry-run)
+        dry_run=1
+        shift
+        ;;
+      -h|--help)
+        show_help "$help_target"
+        exit 0
+        ;;
+      --)
+        shift
+        while [ $# -gt 0 ]; do
+          tools="$tools $1"
+          shift
+        done
+        ;;
+      -*)
+        die "unknown option: $1
+  sh provinator --help"
+        ;;
+      *)
+        tools="$tools $1"
+        shift
+        ;;
+    esac
+  done
+
+  if [ -z "$cmd" ]; then
+    usage_main >&2
+    die "missing command
+  sh provinator install
+  sh provinator uninstall"
+  fi
+  if [ "$layout_only" -eq 1 ] && [ "$cmd" != "install" ]; then
+    die "--layout-only is only valid with install
+  sh provinator install --layout-only"
+  fi
+  if [ "$dry_run" -eq 1 ] && [ "$cmd" != "uninstall" ]; then
+    die "--dry-run is only valid with uninstall
+  sh provinator uninstall --dry-run"
+  fi
+  if [ "$prefix_set" -eq 0 ] && [ -z "${HOME:-}" ]; then
+    die "HOME is not set
+  sh provinator install --prefix \"\$HOME/.local/provinator\""
+  fi
+  if [ -z "$PREFIX" ]; then
+    die "prefix is empty
+  sh provinator install --prefix \"\$HOME/.local/provinator\""
+  fi
+
+  assert_safe_prefix
+
+  case "$cmd" in
+    install) cmd_install ;;
+    uninstall) cmd_uninstall ;;
+    *) die "unknown command: $cmd" ;;
+  esac
+}
+
+main "$@"
